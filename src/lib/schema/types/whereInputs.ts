@@ -1,4 +1,4 @@
-import { inputObjectType } from 'nexus';
+import { inputObjectType, list } from 'nexus';
 
 /* User  */
 export const UserWhereUniqueInput = inputObjectType({
@@ -18,8 +18,8 @@ export const UserWhereInput = inputObjectType({
     t.field('firstName', { type: 'StringFilter' });
     t.field('lastName', { type: 'StringFilter' });
     t.field('email', { type: 'StringFilter' });
-    t.field('AND', { type: 'UserWhereInput' });
-    t.field('OR', { type: 'UserWhereInput' });
-    t.field('NOT', { type: 'UserWhereInput' });
+    t.field('AND', { type: list('UserWhereInput') });
+    t.field('OR', { type: list('UserWhereInput') });
+    t.field('NOT', { type: list('UserWhereInput') });
   },
 });
