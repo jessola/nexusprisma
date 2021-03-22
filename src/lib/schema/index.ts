@@ -1,10 +1,8 @@
 import { Request, Response } from 'express';
+import { makeSchema } from 'nexus';
+
 import path from 'path';
-
-import { makeSchema, asNexusMethod, objectType } from 'nexus';
-import { queryType, mutationType, subscriptionType } from 'nexus';
-
-import { GraphQLDateTime } from 'graphql-iso-date';
+import * as types from './types';
 
 /** Context object passed to all resolvers */
 export interface Context {
@@ -13,24 +11,10 @@ export interface Context {
   foo: 'bar';
 }
 
-const DateTime = asNexusMethod(GraphQLDateTime, 'date');
-
-// const x = objectType({
-//   name: "x",
-//   definition(t) {
-//     t.field('sjfsdf', {
-//       type: "String",
-//       resolve: (_, __, {}) => {
-
-//       }
-//     })
-//   }
-// })
-
-const ROOT = path.join(__dirname, 'generated');
+const ROOT = path.join(__dirname, '.generated');
 
 export const schema = makeSchema({
-  types: [DateTime],
+  types,
   nonNullDefaults: { input: true, output: true },
   outputs: {
     schema: path.join(ROOT, 'schema.graphql'),
