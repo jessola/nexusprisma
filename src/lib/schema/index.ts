@@ -1,14 +1,23 @@
 import { Request, Response } from 'express';
+import { Session } from 'express-session';
 import { makeSchema } from 'nexus';
 
 import path from 'path';
 import * as types from './types';
 
+/** MOVE THIS LATER. Prisma config */
+import { PrismaClient } from '@prisma/client';
+
+/** A request object, wherein the `session` has a key called `userId` */
+interface RequestWithUserInSession extends Request {
+  session: Session & { userId?: number };
+}
+
 /** Context object passed to all resolvers */
 export interface Context {
-  req: Request;
+  req: RequestWithUserInSession;
   res: Response;
-  foo: 'bar';
+  prisma: PrismaClient;
 }
 
 const ROOT = path.join(__dirname, '.generated');

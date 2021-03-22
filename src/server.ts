@@ -12,15 +12,18 @@ import redis from 'redis';
 import connectRedis from 'connect-redis';
 import session from 'express-session';
 
+import prisma from '@lib/db';
+
 colors.enable();
 
 async function main() {
   const { PORT = 4000 } = process.env;
   const app = express();
 
+  /* Pass useful services to context as it's available in all requests */
   const apollo = new ApolloServer({
     schema,
-    context: ({ req, res }): Context => ({ req, res, foo: 'bar' }),
+    context: ({ req, res }): Context => ({ req, res, prisma }),
   });
 
   /* Configure express-session with connect-redis */
@@ -29,13 +32,15 @@ async function main() {
   const sessionMiddleware = session({
     name: 'sid',
     secret: process.env.SESSION_SECRET!,
+    saveUninitialized: false,
+    resave: false,
+
     store: new RedisStore({
       client: redisClient,
       disableTouch: true,
       disableTTL: true,
     }),
-    saveUninitialized: false,
-    resave: false,
+
     cookie: {
       maxAge: 1000 * 3600 * 24 * 7,
       httpOnly: true,

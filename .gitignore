@@ -1,4 +1,5 @@
 src/lib/schema/.generated
+prisma/migrations
 
 ### macOS ###
 # General
