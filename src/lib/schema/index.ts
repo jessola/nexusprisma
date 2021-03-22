@@ -20,7 +20,7 @@ export interface Context {
   prisma: PrismaClient;
 }
 
-const ROOT = path.join(__dirname, '.generated');
+const ROOT = path.join(__dirname, 'generated');
 
 export const schema = makeSchema({
   types,
