@@ -1,5 +1,18 @@
-import { objectType, queryType } from 'nexus';
+import { objectType, queryType, mutationType, inputObjectType } from 'nexus';
 import { list, arg, nullable } from 'nexus';
+
+import argon from 'argon2';
+
+/* Input types - Move these elsewhere */
+export const RegisterUserInput = inputObjectType({
+  name: 'RegisterUserInput',
+  definition(t) {
+    t.string('firstName');
+    t.string('lastName');
+    t.string('email');
+    t.string('password');
+  },
+});
 
 export const User = objectType({
   name: 'User',
@@ -33,7 +46,29 @@ export const userQueries = queryType({
         where: arg({ type: 'UserWhereUniqueInput' }),
       },
       resolve: async (_, { where }, ctx) => {
-        return ctx.prisma.user.findUnique({ where });
+        return ctx.prisma.user.findUnique({ where: where as any });
+      },
+    });
+  },
+});
+
+export const userMutations = mutationType({
+  definition(t) {
+    t.field('registerUser', {
+      type: 'User',
+      args: {
+        input: arg({ type: 'RegisterUserInput' }),
+      },
+      resolve: async (_, { input }, ctx) => {
+        const { password, ...otherFields } = input;
+        const newUser = await ctx.prisma.user.create({
+          data: {
+            ...otherFields,
+            password: await argon.hash(password),
+          },
+        });
+
+        return newUser;
       },
     });
   },

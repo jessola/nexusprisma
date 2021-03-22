@@ -1,6 +1,6 @@
 import { inputObjectType } from 'nexus';
 
-/* User filtering inputs */
+/* User  */
 export const UserWhereUniqueInput = inputObjectType({
   nonNullDefaults: { input: false },
   name: 'UserWhereUniqueInput',
