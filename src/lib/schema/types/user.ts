@@ -28,7 +28,7 @@ export const userQueries = extendType({
         const userId = req.session.userId;
         if (!userId) return null;
 
-        const user = prisma.user.findUnique({ where: { id: userId } });
+        const user = await prisma.user.findUnique({ where: { id: userId } });
         if (!user) return null;
 
         return { user, token: req.session.token };
