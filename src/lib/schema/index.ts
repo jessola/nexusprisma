@@ -1,16 +1,14 @@
 import { Request, Response } from 'express';
 import { Session } from 'express-session';
+import { PrismaClient } from '@prisma/client';
 import { makeSchema } from 'nexus';
 
 import path from 'path';
 import * as types from './types';
 
-/** MOVE THIS LATER. Prisma config */
-import { PrismaClient } from '@prisma/client';
-
 /** A request object, wherein the `session` has a key called `userId` */
 interface RequestWithUserInSession extends Request {
-  session: Session & { userId?: number };
+  session: Session & { userId?: number; token?: string };
 }
 
 /** Context object passed to all resolvers */

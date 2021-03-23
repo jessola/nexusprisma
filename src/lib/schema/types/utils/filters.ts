@@ -1,4 +1,4 @@
-import { inputObjectType } from 'nexus';
+import { enumType, inputObjectType } from 'nexus';
 
 export const IntFilter = inputObjectType({
   nonNullDefaults: { input: false },
@@ -42,5 +42,13 @@ export const BooleanFilter = inputObjectType({
   definition(t) {
     t.boolean('equals');
     t.field('not', { type: 'BooleanFilter' });
+  },
+});
+
+export const OrderByArg = enumType({
+  name: 'OrderByArg',
+  members: {
+    asc: 'asc',
+    desc: 'desc',
   },
 });

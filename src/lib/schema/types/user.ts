@@ -1,36 +1,9 @@
-import { objectType, queryType, mutationType, inputObjectType } from 'nexus';
-import { list, arg, nullable } from 'nexus';
+import { objectType, extendType } from 'nexus';
+import { list, arg, nullable, intArg } from 'nexus';
 
 import argon from 'argon2';
+import { createCsrfToken } from '@lib/utils';
 
-/* Input types - Move these elsewhere */
-export const RegisterUserInput = inputObjectType({
-  name: 'RegisterUserInput',
-  definition(t) {
-    t.string('firstName');
-    t.string('lastName');
-    t.string('email');
-    t.string('password');
-  },
-});
-
-export const LoginUserInput = inputObjectType({
-  name: 'LoginUserInput',
-  definition(t) {
-    t.string('email');
-    t.string('password');
-  },
-});
-
-export const LoginResponse = objectType({
-  name: 'LoginResponse',
-  definition(t) {
-    t.boolean('success');
-    t.field('user', { type: nullable('User') });
-  },
-});
-
-/* Main */
 export const User = objectType({
   name: 'User',
   definition(t) {
@@ -45,17 +18,20 @@ export const User = objectType({
   },
 });
 
-export const userQueries = queryType({
+export const userQueries = extendType({
+  type: 'Query',
   definition(t) {
-    t.field('me', {
+    t.nullable.field('me', {
       description: 'Returns the currently logged in user',
-      type: nullable('User'),
+      type: 'MeResponse',
       resolve: async (_, __, { req, prisma }) => {
         const userId = req.session.userId;
-
         if (!userId) return null;
 
-        return prisma.user.findUnique({ where: { id: userId } });
+        const user = prisma.user.findUnique({ where: { id: userId } });
+        if (!user) return null;
+
+        return { user, token: req.session.token };
       },
     });
 
@@ -63,9 +39,11 @@ export const userQueries = queryType({
       type: list('User'),
       args: {
         where: nullable(arg({ type: 'UserWhereInput' })),
+        orderBy: nullable(list(arg({ type: 'UserOrderByInput' }))),
+        take: nullable(intArg()),
       },
-      resolve: async (_, { where }, ctx) => {
-        return ctx.prisma.user.findMany({ where: where as any });
+      resolve: async (_, { where, take, orderBy }, ctx) => {
+        return ctx.prisma.user.findMany({ where, take, orderBy });
       },
     });
 
@@ -75,16 +53,17 @@ export const userQueries = queryType({
         where: arg({ type: 'UserWhereUniqueInput' }),
       },
       resolve: async (_, { where }, ctx) => {
-        return ctx.prisma.user.findUnique({ where: where as any });
+        return ctx.prisma.user.findUnique({ where });
       },
     });
   },
 });
 
-export const userMutations = mutationType({
+export const userMutations = extendType({
+  type: 'Mutation',
   definition(t) {
     t.field('registerUser', {
-      type: 'User',
+      type: 'RegisterResponse',
       args: {
         input: arg({ type: 'RegisterUserInput' }),
       },
@@ -97,9 +76,12 @@ export const userMutations = mutationType({
           },
         });
 
+        /* Authenticate user */
+        const csrfToken = await createCsrfToken();
         ctx.req.session.userId = newUser.id;
+        ctx.req.session.token = csrfToken;
 
-        return newUser;
+        return { success: true, user: newUser, token: csrfToken };
       },
     });
 
@@ -117,8 +99,12 @@ export const userMutations = mutationType({
         const passwordsMatch = await argon.verify(user.password, password);
 
         if (passwordsMatch) {
+          /* Authenticate user */
+          const csrfToken = await createCsrfToken();
           ctx.req.session.userId = user.id;
-          return { success: true, user };
+          ctx.req.session.token = csrfToken;
+
+          return { success: true, user, token: csrfToken };
         } else {
           return { success: false, user: null };
         }
