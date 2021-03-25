@@ -5,7 +5,7 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "dev": "ts-node-dev -r tsconfig-paths/register src/server",
+    "dev": "ts-node-dev -r tsconfig-paths/register -r ./remove-null-unions src/server",
     "start": "node -r ./resolve-paths dist/server"
   },
   "dependencies": {
