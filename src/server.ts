@@ -59,9 +59,9 @@ async function main() {
   apollo.applyMiddleware({ app });
   apollo.installSubscriptionHandlers(server);
 
-  server.listen(PORT, () =>
-    console.log(`Listening on port ${PORT}`.bgCyan.black)
-  );
+  server.listen(PORT, () => {
+    console.log(`Listening on port ${PORT}`.bgCyan.black);
+  });
 }
 
 main();
