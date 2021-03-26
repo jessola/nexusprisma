@@ -5,8 +5,8 @@
   "license": "MIT",
   "scripts": {
     "build": "tsc",
-    "dev": "ts-node-dev -r tsconfig-paths/register -r ./remove-null-unions src/server",
-    "start": "node -r ./resolve-paths dist/server"
+    "dev": "ts-node-dev -r tsconfig-paths/register -r ./scripts/remove-null-unions src/server",
+    "start": "node -r ./scripts/resolve-paths.js dist/server"
   },
   "dependencies": {
     "@prisma/client": "2.19.0",
