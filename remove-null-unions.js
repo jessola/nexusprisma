@@ -3,7 +3,7 @@ require('colors').enable();
 const path = require('path');
 const fs = require('fs');
 
-const PATH = path.join('src', 'lib', 'schema', 'generated', 'types.ts');
+const PATH = path.join('src', 'lib', 'graphql', 'generated', 'types.ts');
 const NULL_REGEX = /\s?\|\snull\s?/g;
 const DELAY = 5000; // Necessary to override codegen
 

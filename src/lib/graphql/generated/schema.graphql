@@ -68,7 +68,6 @@ input RegisterUserInput {
   email: String!
   firstName: String!
   lastName: String!
-  nickname: String
   password: String!
 }
 
@@ -94,7 +93,6 @@ type User {
   joinedAt: DateTime!
   lastName: String!
   name: String!
-  nickname: String
 }
 
 input UserWhereInput {
@@ -104,8 +102,8 @@ input UserWhereInput {
   email: StringFilter
   firstName: StringFilter
   id: IntFilter
+  joinedAt: StringFilter
   lastName: StringFilter
-  nickname: StringFilter
 }
 
 input UserWhereUniqueInput {

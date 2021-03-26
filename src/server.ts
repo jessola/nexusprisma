@@ -1,29 +1,24 @@
 import 'dotenv/config';
 import { isDev } from '@lib/utils';
 
-import colors from 'colors';
-
 import express from 'express';
 import http from 'http';
 import { ApolloServer } from 'apollo-server-express';
-import { schema, Context } from '@lib/schema';
+import { schema, Context, createCtx } from '@lib/graphql';
 
 import redis from 'redis';
 import connectRedis from 'connect-redis';
 import session from 'express-session';
 
-import prisma from '@lib/db';
-
+import colors from 'colors';
 colors.enable();
 
 async function main() {
   const { PORT = 4000 } = process.env;
   const app = express();
-
-  /* Pass useful services to context as it's available in all requests */
   const apollo = new ApolloServer({
     schema,
-    context: ({ req, res }): Context => ({ req, res, prisma }),
+    context: ({ req, res }): Context => createCtx(req, res),
   });
 
   /* Configure express-session with connect-redis */

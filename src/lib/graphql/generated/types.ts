@@ -52,7 +52,6 @@ export interface NexusGenInputs {
     email: string; // String!
     firstName: string; // String!
     lastName: string; // String!
-    nickname?: string; // String
     password: string; // String!
   }
   StringFilter: { // input type
@@ -75,8 +74,8 @@ export interface NexusGenInputs {
     email?: NexusGenInputs['StringFilter']; // StringFilter
     firstName?: NexusGenInputs['StringFilter']; // StringFilter
     id?: NexusGenInputs['IntFilter']; // IntFilter
+    joinedAt?: NexusGenInputs['StringFilter']; // StringFilter
     lastName?: NexusGenInputs['StringFilter']; // StringFilter
-    nickname?: NexusGenInputs['StringFilter']; // StringFilter
   }
   UserWhereUniqueInput: { // input type
     email?: string; // String
@@ -120,7 +119,6 @@ export interface NexusGenObjects {
     id: number; // Int!
     joinedAt: NexusGenScalars['DateTime']; // DateTime!
     lastName: string; // String!
-    nickname?: string | null; // String
   }
 }
 
@@ -166,7 +164,6 @@ export interface NexusGenFieldTypes {
     joinedAt: NexusGenScalars['DateTime']; // DateTime!
     lastName: string; // String!
     name: string; // String!
-    nickname: string | null; // String
   }
 }
 
@@ -202,7 +199,6 @@ export interface NexusGenFieldTypeNames {
     joinedAt: 'DateTime'
     lastName: 'String'
     name: 'String'
-    nickname: 'String'
   }
 }
 
