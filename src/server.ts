@@ -1,6 +1,7 @@
 import 'dotenv/config';
 import { isDev, Constants } from '@lib/utils';
-import { verifyAccessToken, verifyRefreshToken } from '@lib/utils/token';
+import { token as Token } from '@lib/utils';
+import prisma from '@lib/db';
 
 import express from 'express';
 import cookieParser from 'cookie-parser';
@@ -28,23 +29,30 @@ async function main() {
     const { authorization } = req.headers;
 
     if (!authorization) return next();
-    if (!authorization.match(/^Bearer\s.+/)) return next();
+    if (!authorization.match(/^Bearer .+/)) return next();
 
     const [_, token] = authorization.split(' ');
-    const payload = verifyAccessToken(token);
+    const payload = Token.verifyAccessToken(token);
 
     if (payload) req.userId = payload.userId;
 
     next();
   };
 
-  function refreshTokens(req: ExtendedRequest, res: express.Response) {
+  async function refreshTokens(req: ExtendedRequest, res: express.Response) {
     const refreshToken = req.cookies[Constants.RefreshTokenString];
+    if (!refreshToken) return res.status(401).send('Unauthorized');
 
-    const payload = verifyRefreshToken(refreshToken);
-    const isRefreshTokenValid = !!payload;
+    const payload = Token.verifyRefreshToken(refreshToken);
+    if (!payload) return res.status(401).send('Unauthorized');
 
-    res.status(200).json({ refreshed: isRefreshTokenValid });
+    const { userId: id } = payload;
+    const user = await prisma.user.findUnique({ where: { id } });
+    if (!user) return res.status(401).send('Unauthorized');
+
+    res.cookie(Constants.RefreshTokenString, Token.createRefreshToken(user));
+    res.cookie(Constants.IdTokenString, Token.createIdToken(user));
+    res.status(200).json({ token: Token.createAccessToken(user) });
   }
 
   /* Apply non-graphql middleware */

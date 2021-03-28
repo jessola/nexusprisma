@@ -13,6 +13,8 @@ enum TokenExpiry {
   Refresh = '7d',
 }
 
+type TokenPayload = { userId: number };
+
 export function createAccessToken(user: User) {
   return jwt.sign({ userId: user.id }, ACCESS_TOKEN_SECRET!, {
     expiresIn: TokenExpiry.Access,
@@ -35,17 +37,17 @@ export function createRefreshToken(user: User, version = 1) {
 export function verifyAccessToken(token: string) {
   try {
     const payload = jwt.verify(token, ACCESS_TOKEN_SECRET!);
-    return payload as { userId: number };
+    return payload as TokenPayload;
   } catch {
     return undefined;
   }
 }
 
-export function verifyRefreshToken(token: string): boolean {
+export function verifyRefreshToken(token: string) {
   try {
-    jwt.verify(token, REFRESH_TOKEN_SECRET!);
-    return true;
+    const payload = jwt.verify(token, REFRESH_TOKEN_SECRET!);
+    return payload as TokenPayload;
   } catch {
-    return false;
+    return undefined;
   }
 }
