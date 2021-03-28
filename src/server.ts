@@ -3,6 +3,7 @@ import { isDev, Constants } from '@lib/utils';
 import { verifyAccessToken, verifyRefreshToken } from '@lib/utils/token';
 
 import express from 'express';
+import cookieParser from 'cookie-parser';
 import http from 'http';
 import { ApolloServer } from 'apollo-server-express';
 import { schema, Context, createCtx, ExtendedRequest } from '@lib/graphql';
@@ -43,11 +44,11 @@ async function main() {
     const payload = verifyRefreshToken(refreshToken);
     const isRefreshTokenValid = !!payload;
 
-    return isRefreshTokenValid;
+    res.status(200).json({ refreshed: isRefreshTokenValid });
   }
 
   /* Apply non-graphql middleware */
-  app.get('/', (_req, res) => res.send('Hello from server!'));
+  app.use(cookieParser());
   app.use(authMiddleware);
   app.post('/token', refreshTokens);
 
