@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import { isDev } from '@lib/utils';
-import { verifyAccessToken } from '@lib/utils/token';
+import { isDev, Constants } from '@lib/utils';
+import { verifyAccessToken, verifyRefreshToken } from '@lib/utils/token';
 
 import express from 'express';
 import http from 'http';
@@ -37,9 +37,19 @@ async function main() {
     next();
   };
 
-  /* Define any non-graphql logic/middleware here */
+  function refreshTokens(req: ExtendedRequest, res: express.Response) {
+    const refreshToken = req.cookies[Constants.RefreshTokenString];
+
+    const payload = verifyRefreshToken(refreshToken);
+    const isRefreshTokenValid = !!payload;
+
+    return isRefreshTokenValid;
+  }
+
+  /* Apply non-graphql middleware */
   app.get('/', (_req, res) => res.send('Hello from server!'));
   app.use(authMiddleware);
+  app.post('/token', refreshTokens);
 
   const server = http.createServer(app);
 

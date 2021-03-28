@@ -3,6 +3,8 @@ import { core } from 'nexus';
 import { Accounts } from '@lib/modules';
 import { User } from '@lib/db';
 import { Context } from '@lib/graphql';
+
+import { Constants } from '@lib/utils';
 import { createRefreshToken, createIdToken } from '@lib/utils/token';
 
 interface IUserResolver {
@@ -13,9 +15,6 @@ interface IUserResolver {
   loginUser: core.FieldResolver<'Mutation', 'loginUser'>;
   logoutUser: core.FieldResolver<'Mutation', 'logoutUser'>;
 }
-
-const REFRESH_TOKEN_STRING = 'refresh-token';
-const ID_TOKEN_STRING = 'info';
 
 const Resolver: IUserResolver = {
   getCurrentUser: async (_, __, { req }) => {
@@ -47,16 +46,16 @@ const Resolver: IUserResolver = {
   },
 
   logoutUser: async (_, __, { res }) => {
-    res.clearCookie(REFRESH_TOKEN_STRING);
-    res.clearCookie(ID_TOKEN_STRING);
+    res.clearCookie(Constants.RefreshTokenString);
+    res.clearCookie(Constants.IdTokenString);
     return true;
   },
 };
 
 /* Utilities */
 function setTokensInCookies(ctx: Context, user: User) {
-  ctx.res.cookie(REFRESH_TOKEN_STRING, createRefreshToken(user));
-  ctx.res.cookie(ID_TOKEN_STRING, createIdToken(user));
+  ctx.res.cookie(Constants.RefreshTokenString, createRefreshToken(user));
+  ctx.res.cookie(Constants.IdTokenString, createIdToken(user));
 }
 
 export default Resolver;
