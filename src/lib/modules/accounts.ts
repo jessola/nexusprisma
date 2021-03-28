@@ -37,6 +37,8 @@ export async function loginUser(opts: { email: string; password: string }) {
   return { user: null, token: null };
 }
 
+/* Validation */
+
 /* Utilities */
 function createCsrfToken() {
   return nanoid(32);
