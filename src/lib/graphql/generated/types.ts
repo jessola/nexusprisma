@@ -155,7 +155,7 @@ export interface NexusGenFieldTypes {
     registerUser: NexusGenRootTypes['RegisterResponse']; // RegisterResponse!
   }
   Query: { // field return type
-    me: NexusGenRootTypes['MeResponse']; // MeResponse!
+    me: NexusGenRootTypes['User'] | null; // User
     user: NexusGenRootTypes['User'] | null; // User
     users: NexusGenRootTypes['User'][]; // [User!]!
   }
@@ -190,7 +190,7 @@ export interface NexusGenFieldTypeNames {
     registerUser: 'RegisterResponse'
   }
   Query: { // field return type name
-    me: 'MeResponse'
+    me: 'User'
     user: 'User'
     users: 'User'
   }

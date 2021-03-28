@@ -1,9 +1,8 @@
 import { Request, Response } from 'express';
-import { Session } from 'express-session';
 import { loaders } from './dataloaders';
 
-interface ExtendedRequest extends Request {
-  session: Session & { userId?: number; token?: string };
+export interface ExtendedRequest extends Request {
+  userId?: number;
 }
 
 export interface Context {

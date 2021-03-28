@@ -8,8 +8,8 @@ const {
 } = process.env;
 
 enum TokenExpiry {
-  Access = '15s',
-  Id = '15s',
+  Access = '10m',
+  Id = '10m',
   Refresh = '7d',
 }
 
@@ -34,10 +34,10 @@ export function createRefreshToken(user: User, version = 1) {
 
 export function verifyAccessToken(token: string) {
   try {
-    jwt.verify(token, ACCESS_TOKEN_SECRET!);
-    return true;
+    const payload = jwt.verify(token, ACCESS_TOKEN_SECRET!);
+    return payload as { userId: number };
   } catch {
-    return false;
+    return undefined;
   }
 }
 

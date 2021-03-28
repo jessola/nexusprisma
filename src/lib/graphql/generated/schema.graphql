@@ -53,7 +53,7 @@ enum OrderByArg {
 }
 
 type Query {
-  me: MeResponse!
+  me: User
   user(where: UserWhereUniqueInput!): User
   users(orderBy: [UserOrderByInput!], skip: Int, take: Int, where: UserWhereInput): [User!]!
 }

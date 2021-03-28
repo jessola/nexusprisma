@@ -4,8 +4,8 @@ import Resolver from '../resolvers/user';
 export const userQueries = extendType({
   type: 'Query',
   definition(t) {
-    t.field('me', {
-      type: 'MeResponse',
+    t.nullable.field('me', {
+      type: 'User',
       resolve: Resolver.getCurrentUser,
     });
 

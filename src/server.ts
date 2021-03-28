@@ -1,14 +1,11 @@
 import 'dotenv/config';
 import { isDev } from '@lib/utils';
+import { verifyAccessToken } from '@lib/utils/token';
 
 import express from 'express';
 import http from 'http';
 import { ApolloServer } from 'apollo-server-express';
-import { schema, Context, createCtx } from '@lib/graphql';
-
-import redis from 'redis';
-import connectRedis from 'connect-redis';
-import session from 'express-session';
+import { schema, Context, createCtx, ExtendedRequest } from '@lib/graphql';
 
 import colors from 'colors';
 colors.enable();
@@ -16,37 +13,33 @@ colors.enable();
 async function main() {
   const { PORT = 4000 } = process.env;
   const app = express();
+
   const apollo = new ApolloServer({
     schema,
     context: ({ req, res }): Context => createCtx(req, res),
   });
 
-  /* Configure express-session with connect-redis */
-  const redisClient = redis.createClient();
-  const RedisStore = connectRedis(session);
-  const sessionMiddleware = session({
-    name: 'sid',
-    secret: process.env.SESSION_SECRET!,
-    saveUninitialized: false,
-    resave: false,
+  const authMiddleware = (
+    req: ExtendedRequest,
+    res: express.Response,
+    next: express.NextFunction
+  ) => {
+    const { authorization } = req.headers;
 
-    store: new RedisStore({
-      client: redisClient,
-      disableTouch: true,
-      disableTTL: true,
-    }),
+    if (!authorization) return next();
+    if (!authorization.match(/^Bearer\s.+/)) return next();
 
-    cookie: {
-      maxAge: 1000 * 3600 * 24 * 7,
-      httpOnly: true,
-      secure: !isDev,
-      sameSite: 'lax',
-    },
-  });
+    const [_, token] = authorization.split(' ');
+    const payload = verifyAccessToken(token);
+
+    if (payload) req.userId = payload.userId;
+
+    next();
+  };
 
   /* Define any non-graphql logic/middleware here */
   app.get('/', (_req, res) => res.send('Hello from server!'));
-  app.use(sessionMiddleware);
+  app.use(authMiddleware);
 
   const server = http.createServer(app);
 

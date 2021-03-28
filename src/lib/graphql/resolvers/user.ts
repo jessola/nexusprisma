@@ -3,11 +3,7 @@ import { core } from 'nexus';
 import { Accounts } from '@lib/modules';
 import { User } from '@lib/db';
 import { Context } from '@lib/graphql';
-
-function authenticate(ctx: Context, user: User, token: string) {
-  ctx.req.session.userId = user.id;
-  ctx.req.session.token = token;
-}
+import { createRefreshToken, createIdToken } from '@lib/utils/token';
 
 interface IUserResolver {
   getCurrentUser: core.FieldResolver<'Query', 'me'>;
@@ -18,13 +14,16 @@ interface IUserResolver {
   logoutUser: core.FieldResolver<'Mutation', 'logoutUser'>;
 }
 
+const REFRESH_TOKEN_STRING = 'refresh-token';
+const ID_TOKEN_STRING = 'info';
+
 const Resolver: IUserResolver = {
   getCurrentUser: async (_, __, { req }) => {
-    const { userId, token } = req.session;
-    if (!userId || !token) return { user: null, token: null };
+    const userId = req.userId;
+    if (!userId) return null;
 
     const user = await Accounts.getUser({ where: { id: userId } });
-    return { user, token };
+    return user;
   },
 
   getUsers: (_, { orderBy, skip, take, where }) => {
@@ -37,26 +36,27 @@ const Resolver: IUserResolver = {
 
   registerUser: async (_, { input }, ctx) => {
     const { user, token } = await Accounts.registerUser(input);
-    authenticate(ctx, user, token);
+    setTokensInCookies(ctx, user);
     return { success: true, user, token };
   },
 
   loginUser: async (_, { input }, ctx) => {
     const { user, token } = await Accounts.loginUser(input);
-    if (user && token) authenticate(ctx, user, token); // Check validity first
+    if (user) setTokensInCookies(ctx, user);
     return { success: !!user, user, token };
   },
 
-  logoutUser: async (_, __, { req, res }) => {
-    return new Promise((resolve) => {
-      req.session.destroy((err) => {
-        if (err) resolve(false);
-
-        res.clearCookie('sid');
-        resolve(true);
-      });
-    });
+  logoutUser: async (_, __, { res }) => {
+    res.clearCookie(REFRESH_TOKEN_STRING);
+    res.clearCookie(ID_TOKEN_STRING);
+    return true;
   },
 };
+
+/* Utilities */
+function setTokensInCookies(ctx: Context, user: User) {
+  ctx.res.cookie(REFRESH_TOKEN_STRING, createRefreshToken(user));
+  ctx.res.cookie(ID_TOKEN_STRING, createIdToken(user));
+}
 
 export default Resolver;

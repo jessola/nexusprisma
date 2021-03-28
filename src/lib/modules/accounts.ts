@@ -1,7 +1,7 @@
 import prisma, { Prisma, User } from '@lib/db';
 import argon from 'argon2';
 import { nanoid } from 'nanoid/async';
-import { token } from '@lib/utils';
+import { createAccessToken } from '@lib/utils/token';
 
 /* CRUD */
 export function listUsers(opts?: Prisma.UserFindManyArgs) {
@@ -15,10 +15,10 @@ export function getUser(opts: Prisma.UserFindUniqueArgs) {
 /* Actions */
 export async function registerUser(opts: Prisma.UserCreateInput) {
   const { password, ...otherFields } = opts;
-  const token = await createCsrfToken();
   const newUser = await prisma.user.create({
     data: { ...otherFields, password: await argon.hash(password) },
   });
+  const token = createAccessToken(newUser);
 
   return { user: newUser, token };
 }
@@ -31,7 +31,7 @@ export async function loginUser(opts: { email: string; password: string }) {
 
   const passwordsMatch = await argon.verify(user.password, password);
   if (passwordsMatch) {
-    const token = await createCsrfToken();
+    const token = createAccessToken(user);
     return { user, token };
   }
 
