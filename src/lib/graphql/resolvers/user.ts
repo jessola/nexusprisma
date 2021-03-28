@@ -27,8 +27,8 @@ const Resolver: IUserResolver = {
     return { user, token };
   },
 
-  getUsers: (_, { where }) => {
-    return Accounts.listUsers({ where });
+  getUsers: (_, { orderBy, skip, take, where }) => {
+    return Accounts.listUsers({ orderBy, skip, take, where });
   },
 
   getUser: (_, { where }) => {

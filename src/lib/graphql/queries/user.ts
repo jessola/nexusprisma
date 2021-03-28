@@ -1,4 +1,4 @@
-import { arg, extendType, nullable } from 'nexus';
+import { arg, extendType, nullable, list, intArg } from 'nexus';
 import Resolver from '../resolvers/user';
 
 export const userQueries = extendType({
@@ -12,6 +12,9 @@ export const userQueries = extendType({
     t.list.field('users', {
       type: 'User',
       args: {
+        orderBy: nullable(list(arg({ type: 'UserOrderByInput' }))),
+        skip: nullable(intArg()),
+        take: nullable(intArg()),
         where: nullable(arg({ type: 'UserWhereInput' })),
       },
       resolve: Resolver.getUsers,

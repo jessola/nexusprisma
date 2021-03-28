@@ -67,6 +67,13 @@ export interface NexusGenInputs {
     notIn?: string[]; // [String!]
     startsWith?: string; // String
   }
+  UserOrderByInput: { // input type
+    email?: NexusGenEnums['OrderByArg']; // OrderByArg
+    firstName?: NexusGenEnums['OrderByArg']; // OrderByArg
+    id?: NexusGenEnums['OrderByArg']; // OrderByArg
+    joinedAt?: NexusGenEnums['OrderByArg']; // OrderByArg
+    lastName?: NexusGenEnums['OrderByArg']; // OrderByArg
+  }
   UserWhereInput: { // input type
     AND?: NexusGenInputs['UserWhereInput'][]; // [UserWhereInput!]
     NOT?: NexusGenInputs['UserWhereInput'][]; // [UserWhereInput!]
@@ -216,6 +223,9 @@ export interface NexusGenArgTypes {
       where: NexusGenInputs['UserWhereUniqueInput']; // UserWhereUniqueInput!
     }
     users: { // args
+      orderBy?: NexusGenInputs['UserOrderByInput'][]; // [UserOrderByInput!]
+      skip?: number; // Int
+      take?: number; // Int
       where?: NexusGenInputs['UserWhereInput']; // UserWhereInput
     }
   }

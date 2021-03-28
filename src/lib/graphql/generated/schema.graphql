@@ -55,7 +55,7 @@ enum OrderByArg {
 type Query {
   me: MeResponse!
   user(where: UserWhereUniqueInput!): User
-  users(where: UserWhereInput): [User!]!
+  users(orderBy: [UserOrderByInput!], skip: Int, take: Int, where: UserWhereInput): [User!]!
 }
 
 type RegisterResponse {
@@ -93,6 +93,14 @@ type User {
   joinedAt: DateTime!
   lastName: String!
   name: String!
+}
+
+input UserOrderByInput {
+  email: OrderByArg
+  firstName: OrderByArg
+  id: OrderByArg
+  joinedAt: OrderByArg
+  lastName: OrderByArg
 }
 
 input UserWhereInput {

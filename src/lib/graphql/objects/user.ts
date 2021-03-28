@@ -49,6 +49,18 @@ export const UserWhereInput = inputObjectType({
   },
 });
 
+/* Ordering */
+export const UserOrderByInput = inputObjectType({
+  name: 'UserOrderByInput',
+  definition(t) {
+    t.nullable.field('id', { type: 'OrderByArg' });
+    t.nullable.field('firstName', { type: 'OrderByArg' });
+    t.nullable.field('lastName', { type: 'OrderByArg' });
+    t.nullable.field('email', { type: 'OrderByArg' });
+    t.nullable.field('joinedAt', { type: 'OrderByArg' });
+  },
+});
+
 export const UserWhereUniqueInput = inputObjectType({
   name: 'UserWhereUniqueInput',
   definition(t) {
