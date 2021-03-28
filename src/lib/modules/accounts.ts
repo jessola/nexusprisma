@@ -1,6 +1,7 @@
 import prisma, { Prisma, User } from '@lib/db';
 import argon from 'argon2';
 import { nanoid } from 'nanoid/async';
+import { token } from '@lib/utils';
 
 /* CRUD */
 export function listUsers(opts?: Prisma.UserFindManyArgs) {
@@ -43,7 +44,3 @@ export async function loginUser(opts: { email: string; password: string }) {
 function createCsrfToken() {
   return nanoid(32);
 }
-
-function createTokens(user: User) {}
-
-function verifyAccessToken(token: string) {}
