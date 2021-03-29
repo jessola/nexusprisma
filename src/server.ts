@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import { isDev, Constants } from '@lib/utils';
-import { token as Token } from '@lib/utils';
+import cors from 'cors';
+import { Constants, token as Token, setAuthCookies } from '@lib/utils';
 import prisma from '@lib/db';
 
 import express from 'express';
@@ -50,12 +50,13 @@ async function main() {
     const user = await prisma.user.findUnique({ where: { id } });
     if (!user) return res.status(401).send('Unauthorized');
 
-    res.cookie(Constants.RefreshTokenString, Token.createRefreshToken(user));
-    res.cookie(Constants.IdTokenString, Token.createIdToken(user));
+    setAuthCookies(res, user);
+
     res.status(200).json({ token: Token.createAccessToken(user) });
   }
 
   /* Apply non-graphql middleware */
+  app.use(cors({ credentials: true, origin: 'http://127.0.0.1:3000' }));
   app.use(cookieParser());
   app.use(authMiddleware);
   app.post('/token', refreshTokens);

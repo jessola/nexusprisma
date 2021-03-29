@@ -1,11 +1,7 @@
 import { core } from 'nexus';
 
 import { Accounts } from '@lib/modules';
-import { User } from '@lib/db';
-import { Context } from '@lib/graphql';
-
-import { Constants } from '@lib/utils';
-import { createRefreshToken, createIdToken } from '@lib/utils/token';
+import { Constants, setAuthCookies } from '@lib/utils';
 
 interface IUserResolver {
   getCurrentUser: core.FieldResolver<'Query', 'me'>;
@@ -33,29 +29,24 @@ const Resolver: IUserResolver = {
     return Accounts.getUser({ where });
   },
 
-  registerUser: async (_, { input }, ctx) => {
+  registerUser: async (_, { input }, { res }) => {
     const { user, token } = await Accounts.registerUser(input);
-    setTokensInCookies(ctx, user);
+    setAuthCookies(res, user);
     return { success: true, user, token };
   },
 
-  loginUser: async (_, { input }, ctx) => {
+  loginUser: async (_, { input }, { res }) => {
     const { user, token } = await Accounts.loginUser(input);
-    if (user) setTokensInCookies(ctx, user);
+    if (user) setAuthCookies(res, user);
     return { success: !!user, user, token };
   },
 
   logoutUser: async (_, __, { res }) => {
     res.clearCookie(Constants.RefreshTokenString);
     res.clearCookie(Constants.IdTokenString);
+
     return true;
   },
 };
-
-/* Utilities */
-function setTokensInCookies(ctx: Context, user: User) {
-  ctx.res.cookie(Constants.RefreshTokenString, createRefreshToken(user));
-  ctx.res.cookie(Constants.IdTokenString, createIdToken(user));
-}
 
 export default Resolver;
