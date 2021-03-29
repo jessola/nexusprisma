@@ -31,18 +31,18 @@ declare global {
 
 export interface NexusGenInputs {
   BooleanFilter: { // input type
-    equals?: boolean | null; // Boolean
-    not?: NexusGenInputs['BooleanFilter'] | null; // BooleanFilter
+    equals?: boolean; // Boolean
+    not?: NexusGenInputs['BooleanFilter']; // BooleanFilter
   }
   IntFilter: { // input type
-    equals?: number | null; // Int
-    gt?: number | null; // Int
-    gte?: number | null; // Int
-    in?: number[] | null; // [Int!]
-    lt?: number | null; // Int
-    lte?: number | null; // Int
-    not?: NexusGenInputs['IntFilter'] | null; // IntFilter
-    notIn?: number[] | null; // [Int!]
+    equals?: number; // Int
+    gt?: number; // Int
+    gte?: number; // Int
+    in?: number[]; // [Int!]
+    lt?: number; // Int
+    lte?: number; // Int
+    not?: NexusGenInputs['IntFilter']; // IntFilter
+    notIn?: number[]; // [Int!]
   }
   LoginUserInput: { // input type
     email: string; // String!
@@ -55,38 +55,38 @@ export interface NexusGenInputs {
     password: string; // String!
   }
   StringFilter: { // input type
-    contains?: string | null; // String
-    endsWith?: string | null; // String
-    equals?: string | null; // String
-    gt?: string | null; // String
-    gte?: string | null; // String
-    in?: string[] | null; // [String!]
-    lt?: string | null; // String
-    lte?: string | null; // String
-    not?: NexusGenInputs['StringFilter'] | null; // StringFilter
-    notIn?: string[] | null; // [String!]
-    startsWith?: string | null; // String
+    contains?: string; // String
+    endsWith?: string; // String
+    equals?: string; // String
+    gt?: string; // String
+    gte?: string; // String
+    in?: string[]; // [String!]
+    lt?: string; // String
+    lte?: string; // String
+    not?: NexusGenInputs['StringFilter']; // StringFilter
+    notIn?: string[]; // [String!]
+    startsWith?: string; // String
   }
   UserOrderByInput: { // input type
-    email?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
-    firstName?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
-    id?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
-    joinedAt?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
-    lastName?: NexusGenEnums['OrderByArg'] | null; // OrderByArg
+    email?: NexusGenEnums['OrderByArg']; // OrderByArg
+    firstName?: NexusGenEnums['OrderByArg']; // OrderByArg
+    id?: NexusGenEnums['OrderByArg']; // OrderByArg
+    joinedAt?: NexusGenEnums['OrderByArg']; // OrderByArg
+    lastName?: NexusGenEnums['OrderByArg']; // OrderByArg
   }
   UserWhereInput: { // input type
-    AND?: NexusGenInputs['UserWhereInput'][] | null; // [UserWhereInput!]
-    NOT?: NexusGenInputs['UserWhereInput'][] | null; // [UserWhereInput!]
-    OR?: NexusGenInputs['UserWhereInput'][] | null; // [UserWhereInput!]
-    email?: NexusGenInputs['StringFilter'] | null; // StringFilter
-    firstName?: NexusGenInputs['StringFilter'] | null; // StringFilter
-    id?: NexusGenInputs['IntFilter'] | null; // IntFilter
-    joinedAt?: NexusGenInputs['StringFilter'] | null; // StringFilter
-    lastName?: NexusGenInputs['StringFilter'] | null; // StringFilter
+    AND?: NexusGenInputs['UserWhereInput'][]; // [UserWhereInput!]
+    NOT?: NexusGenInputs['UserWhereInput'][]; // [UserWhereInput!]
+    OR?: NexusGenInputs['UserWhereInput'][]; // [UserWhereInput!]
+    email?: NexusGenInputs['StringFilter']; // StringFilter
+    firstName?: NexusGenInputs['StringFilter']; // StringFilter
+    id?: NexusGenInputs['IntFilter']; // IntFilter
+    joinedAt?: NexusGenInputs['StringFilter']; // StringFilter
+    lastName?: NexusGenInputs['StringFilter']; // StringFilter
   }
   UserWhereUniqueInput: { // input type
-    email?: string | null; // String
-    id?: number | null; // Int
+    email?: string; // String
+    id?: number; // Int
   }
 }
 
@@ -223,10 +223,10 @@ export interface NexusGenArgTypes {
       where: NexusGenInputs['UserWhereUniqueInput']; // UserWhereUniqueInput!
     }
     users: { // args
-      orderBy?: NexusGenInputs['UserOrderByInput'][] | null; // [UserOrderByInput!]
-      skip?: number | null; // Int
-      take?: number | null; // Int
-      where?: NexusGenInputs['UserWhereInput'] | null; // UserWhereInput
+      orderBy?: NexusGenInputs['UserOrderByInput'][]; // [UserOrderByInput!]
+      skip?: number; // Int
+      take?: number; // Int
+      where?: NexusGenInputs['UserWhereInput']; // UserWhereInput
     }
   }
 }

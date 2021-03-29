@@ -1,6 +1,5 @@
 import prisma, { Prisma, User } from '@lib/db';
 import argon from 'argon2';
-import { nanoid } from 'nanoid/async';
 import { createAccessToken } from '@lib/utils/token';
 
 /* CRUD */
